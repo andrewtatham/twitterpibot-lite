@@ -13,7 +13,9 @@ def tweet_time():
 def tweet_photo():
     photo = t.take_photo()
     media_id = t.upload(photo)
-    t.tweet(media_id=media_id)
+    text = ""
+    text += datetime.datetime.now().strftime("%c")
+    t.tweet(text=text, media_id=media_id)
 
 
 # Responses...
@@ -58,34 +60,31 @@ def time_response(data):
     if "text" in data and "time" in data["text"]:
         text = data["user"]["screen_name"] + " "
         text += datetime.datetime.now().strftime("%c")
-        reply_to_status_id = data["id_str"]
-        t.tweet(text=text, reply_to_status_id=reply_to_status_id)
+        in_reply_to_status_id = data["id_str"]
+        t.tweet(text=text, in_reply_to_status_id=in_reply_to_status_id)
 
 
 def photo_response(data):
     if "text" in data and "photo" in data["text"]:
         text = data["user"]["screen_name"]
-        reply_to_status_id = data["id_str"]
+        in_reply_to_status_id = data["id_str"]
         photo = t.take_photo()
         media_id = t.upload(photo)
-        t.tweet(text=text, media_id=media_id, reply_to_status_id=reply_to_status_id)
+        t.tweet(text=text, media_id=media_id, in_reply_to_status_id=in_reply_to_status_id)
 
 
 def stop_response(data):
     if "user" in data and data["user"]["screen_name"] == "andrewtatham" and "text" in data and "stop" in data["text"]:
         print("STOPPING")
-        t.stop_schedule()
-        t.stop_stream()
-        exit(0)
+        t.stop()
 
 
-t.add_scheduled_job(func=tweet_time, trigger=CronTrigger(minute="*/2"))
-t.add_scheduled_job(func=tweet_photo, trigger=CronTrigger(minute="*/5"))
+t.add_scheduled_job(func=tweet_time, trigger=CronTrigger(minute="*/5"))
+t.add_scheduled_job(func=tweet_photo, trigger=CronTrigger(minute="*/15"))
 
 t.add_response(print_data_response)
 # t.add_response(time_response)
 # t.add_response(photo_response)
-# t.add_response(stop_response)
+t.add_response(stop_response)
 
-t.start_schedule()
-t.start_stream()
+t.start()
