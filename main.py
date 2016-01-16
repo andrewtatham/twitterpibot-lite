@@ -20,40 +20,45 @@ def tweet_photo():
 
 # Responses...
 def print_data_response(data):
-    if "text" in data:
-        tweet = data
-        sender = tweet["user"]
-        print("Tweet: " + sender["name"] + " [@" + sender["screen_name"] + "] - " + tweet["text"])
+    try:
 
-    elif "direct_message" in data:
-        dm = data["direct_message"]
-        sender = dm["sender"]
-        print("Direct Message: " + sender["name"] + " [@" + sender["screen_name"] + "] - " + dm["text"])
+        if "text" in data:
+            tweet = data
+            sender = tweet["user"]
+            print("Tweet: " + sender["name"] + " [@" + sender["screen_name"] + "] - " + tweet["text"])
 
-    elif "event" in data:
+        elif "direct_message" in data:
+            dm = data["direct_message"]
+            sender = dm["sender"]
+            print("Direct Message: " + sender["name"] + " [@" + sender["screen_name"] + "] - " + dm["text"])
 
-        event = data["event"]
-        source = event["source"]
-        target = event["target"]
+        elif "event" in data:
 
-        text = "Event:"
-        text += " Source:" + source["name"] + " @" + source["screen_name"]
-        text += " Target:" + target["name"] + " @" + target["screen_name"]
+            event = data["event"]
+            source = data["source"]
+            target = data["target"]
 
-        if "target_object" in event:
-            target_object = event["target_object"]
-            if "id_str" in target_object:
-                text += " Id: " + target_object["id_str"]
-            if "text" in target_object:
-                text += " Text: " + target_object["text"]
+            text = "Event:" + event
+            text += " Source:" + source["name"] + " @" + source["screen_name"]
+            text += " Target:" + target["name"] + " @" + target["screen_name"]
 
-        print(text)
+            if "target_object" in data:
+                target_object = event["target_object"]
+                if "id_str" in target_object:
+                    text += " Id: " + target_object["id_str"]
+                if "text" in target_object:
+                    text += " Text: " + target_object["text"]
 
-    elif "friends" in data:
-        print("Connected...")
+            print(text)
 
-    else:
+        elif "friends" in data:
+            print("Connected...")
+
+        else:
+            pprint(data)
+    except Exception as ex:
         pprint(data)
+        print ex
 
 
 def time_response(data):
