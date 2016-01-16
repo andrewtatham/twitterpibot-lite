@@ -126,8 +126,10 @@ def upload(file_path):
 
 
 def tweet(text=None, media_id=None, in_reply_to_status_id = None):
-
-    twitter.update_status(status=text, media_ids=[media_id], in_reply_to_status_id = in_reply_to_status_id)
+    media_ids=None
+    if media_id:
+        media_ids=[media_id]
+    twitter.update_status(status=text, media_ids=media_ids, in_reply_to_status_id = in_reply_to_status_id)
 
 
 tokens = authenticate()
